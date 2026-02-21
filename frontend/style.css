@@ -1,0 +1,171 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  background: #f4f5f7;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background: #0052cc;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+#aiPanel {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.3);
+}
+
+#aiPanel h3 {
+  margin-bottom: 5px;
+}
+
+/* Main content */
+.main {
+  flex: 1;
+  padding: 0;
+}
+
+.topnav {
+  background: #0747a6;
+  color: white;
+  padding: 15px 20px;
+}
+
+.topnav h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Reports Panel */
+.reports {
+  padding: 15px 20px;
+  background: #e8f0fe;
+  display: flex;
+  gap: 30px;
+  font-weight: bold;
+}
+
+/* Board Columns */
+.board {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.column {
+  background: #e8f0fe;
+  flex: 1;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.column h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #0052cc;
+}
+
+/* Tickets */
+.ticket-card {
+  background: white;
+  border-left: 6px solid #0052cc;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.ticket-card.confirmed {
+  border-left-color: green;
+}
+
+.ticket-card.unclear {
+  border-left-color: orange;
+}
+
+.ticket-card.deactivated {
+  border-left-color: gray;
+}
+
+.ticket-card h3 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+}
+
+.ticket-card p {
+  margin: 5px 0;
+}
+
+.ticket-card button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #0052cc;
+  color: white;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.ticket-card button:hover {
+  background: #0747a6;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 350px;
+  margin: 100px auto;
+  text-align: center;
+}
+
+.modal-content button {
+  margin: 10px;
+  padding: 8px 15px;
+}

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jira AI · Deactivation Portal</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230052CC'%3E%3Cpath d='M11.53 2C11.53 4.4 9.4 6.53 7 6.53V11.4c2.8 0 5.07-2.27 5.07-5.07H11.53z'/%3E%3Cpath d='M18.47 6.53C18.47 10.7 15.17 14 11 14v4.47c5.3 0 9.6-4.3 9.6-9.6h-2.13z'/%3E%3Cpath d='M4.53 2C4.53 7.3 8.83
+         11.6 14.13 11.6V9.47c-4.17 0-7.53-3.36-7.53-7.53H4.53z'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4fa;
+            color: #1e2b45;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Professional Sidebar with SVG logo */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #0c2d6b 0%, #082145 100%);
+            color: white;
+            padding: 28px 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0, 20, 50, 0.2);
+        }
+
+        .logo-container {
+            padding: 0 24px 24px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 16px; /* Reduced margin */
+        }
+
+        .logo-svg {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-svg svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: white;
+        }
+
+        .logo-text span {
+            color: #ffcd5c;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: block;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            flex-grow: 1;
+            padding: 0 16px;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 6px;
+        }
+
+        .sidebar ul li a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 18px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            gap: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar ul li a svg {
+            width: 22px;
+            height: 22px;
+            fill: rgba(255,255,255,0.8);
+        }
+
+        .sidebar ul li a:hover, 
+        .sidebar ul li a.active {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+
+        .sidebar ul li a.active svg {
+            fill: #ffcd5c;
+        }
+
+        /* AI Panel - Moved UP with reduced top margin */
+        #aiPanel {
+            margin: 0px 20px 30px 20px;  /* Removed top margin */
+            padding: 22px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        #aiPanel h3 {
+            margin-bottom: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #b8d0ff;
+        }
+
+        #aiPanel h3 svg {
+            width: 20px;
+            height: 20px;
+            fill: #b8d0ff;
+        }
+
+        #aiStatus {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px 14px;
+            border-radius: 14px;
+            min-height: 48px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 18px;
+            color: #eef4ff;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Navigation - WITHOUT logo SVG */
+        .topnav {
+            background: white;
+            padding: 16px 32px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e6ecf5;
+        }
+
+        .topnav h1 {
+            color: #0c2d6b;
+            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 600;
+            /* Removed SVG icon */
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: black;
+            padding: 6px 18px 6px 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 400;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #0c2d6b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .page-content {
+            padding: 32px 36px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* KPI Cards with SVG icons */
+        .reports {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            flex: 1 1 200px;
+            box-shadow: 0 8px 22px rgba(0,30,60,0.06);
+            border: 1px solid #eef3fc;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .report-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(12,45,107,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .card-header svg {
+            width: 28px;
+            height: 28px;
+            fill: #0c2d6b;
+        }
+
+        .report-card.pending .card-header svg {
+            fill: #c96b2c;
+        }
+
+        .report-card.deactivated .card-header svg {
+            fill: #2c7a5a;
+        }
+
+        .report-card h3 {
+            color: #3E4F6A;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .report-card .count {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: #0c2d6b;
+            line-height: 1.2;
+            padding-left: 38px;
+        }
+
+        .report-card.pending .count { color: #c96b2c; }
+        .report-card.deactivated .count { color: #2c7a5a; }
+
+        /* Kanban Board */
+        .board {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .column {
+            background: #f7faff;
+            border-radius: 28px;
+            padding: 22px 18px;
+            flex: 1;
+            border: 1px solid #e2ecfc;
+        }
+
+        .column-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed #cbd9f0;
+        }
+
+        .column-header svg {
+            width: 24px;
+            height: 24px;
+            fill: #0c2d6b;
+        }
+
+        .column-header h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #0c2d6b;
+        }
+
+        .tickets {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Ticket Cards */
+        .ticket-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border-left: 6px solid #2a60b3;
+            box-shadow: 0 6px 16px rgba(0,20,40,0.04);
+            border: 1px solid #edf2fa;
+            border-left-width: 6px;
+        }
+
+        .ticket-card.confirmed { border-left-color: #2c7a5a; }
+        .ticket-card.unclear { border-left-color: #c96b2c; }
+        .ticket-card.deactivated { border-left-color: #8a9bb8; }
+
+        .ticket-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e2b45;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ticket-card h3 svg {
+            width: 16px;
+            height: 16px;
+            fill: #5b6f92;
+        }
+
+        .ticket-card p {
+            font-size: 0.9rem;
+            color: #5b6f92;
+            margin: 6px 0 10px 0;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #edf2fa;
+            color: #2a60b3;
+        }
+
+        .status svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .status.pending { background: #fff1e0; color: #c96b2c; }
+        .status.confirmed { background: #e2f3e9; color: #2c7a5a; }
+        .status.unclear { background: #ffead2; color: #b55a1c; }
+        .status.deactivated { background: #eef2f6; color: #5b6f92; }
+
+        .ticket-actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .btn-primary {
+            background: #0c2d6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #143a7c;
+        }
+
+        .btn-secondary {
+            background: #f0f4fc;
+            color: #1e2b45;
+            border: 1px solid #d9e3f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e9f5;
+        }
+
+        .btn-success {
+            background: #2c7a5a;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1f5f43;
+        }
+
+        /* Tables */
+        .reports-table {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 22px rgba(0,30,60,0.04);
+            border: 1px solid #eef3fc;
+        }
+
+        .reports-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reports-table th {
+            background: #f8faff;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #0c2d6b;
+            border-bottom: 1px solid #e2ecfc;
+        }
+
+        .reports-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #edf2fa;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            padding: 10px 22px;
+            border: 1px solid #d9e3f0;
+            border-radius: 40px;
+            width: 300px;
+            font-size: 0.95rem;
+        }
+
+        /* QR Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 25, 50, 0.7);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 36px;
+            padding: 36px;
+            width: 480px;
+            max-width: 90%;
+            box-shadow: 0 30px 60px rgba(0, 20, 50, 0.4);
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #0c2d6b;
+            margin-bottom: 16px;
+        }
+
+        .modal-content h2 svg {
+            width: 28px;
+            height: 28px;
+            fill: #0c2d6b;
+        }
+
+        #qrcode {
+            margin: 24px auto;
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 20px;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .board, .reports {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar with SVG Logo -->
+    <div class="sidebar">
+        <div class="logo-container">
+            <div class="logo-svg">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
+                <div class="logo-text">Jira AI<span>Deactivation portal</span></div>
+            </div>
+        </div>
+        <ul>
+            <li><a href="#" class="active" onclick="showPage('dashboard')">
+                <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                Dashboard
+            </a></li>
+            <li><a href="#" onclick="showPage('tickets')">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/><path d="M8 8h8v2H8z"/></svg>
+                Tickets
+            </a></li>
+            <li><a href="#" onclick="showPage('reports')">
+                <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+                Reports
+            </a></li>
+        </ul>
+        <!-- AI Panel - Now higher up (right after menu) -->
+        <div id="aiPanel">
+            <h3>
+                <svg viewBox="0 0 24 24"><path d="M20 9V7c0-1.1-.9-2-2-2h-4c0-1.66-1.34-3-3-3S8 3.34 8 5H4c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h4c0 1.66 1.34 3 3 3s3-1.34 3-3h4c1.1 0 2-.9 2-2z"/></svg>
+                AI Agent
+            </h3>
+            <p id="aiStatus">⚙️ Idle · Ready to scan</p>
+            <button class="btn btn-primary" onclick="aiScanTickets()" style="width: 100%;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-8h4v2h-4v4h-2v-4H7v-2h4V7h2v4z"/></svg>
+                Run AI Scan
+            </button>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main">
+        <div class="topnav">
+            <h1>Centralized Employee Offboarding & Deactivation System</h1>  <!-- Removed SVG icon -->
+            <div class="user-info">
+                <div class="user-avatar">KD</div>
+                <span>Krishna Sreenivas S - Admin</span>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="reports">
+                    <div class="report-card">
+                        <div class="card-header">
+                            <svg viewBox="0 0 24 24"><path d="M14 8h-4v8h4V8zm-2 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-12c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+                            <h3>To Deactivate</h3>
+                        </div>
+                        <div class="count" id="reportToDeactivate">0</div>
+                    </div>
+                    <div class="report-card pending">
+                        <div class="card-header">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-12h-2v6h2zm0 8h-2v2h2z"/></svg>
+                            <h3>Pending Approval</h3>
+                        </div>
+                        <div class="count" id="reportPending">0</div>
+                    </div>
+                    <div class="report-card deactivated">
+                        <div class="card-header">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                            <h3>Deactivated</h3>
+                        </div>
+                        <div class="count" id="reportDeactivated">0</div>
+                    </div>
+                </div>
+
+                <div class="board">
+                    <div class="column">
+                        <div class="column-header">
+                            <svg viewBox="0 0 24 24"><path d="M14 8h-4v8h4V8zm-2 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-12c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+                            <h2>To Deactivate</h2>
+                        </div>
+                        <div class="tickets" id="toDeactivate"></div>
+                    </div>
+                    <div class="column">
+                        <div class="column-header">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-12h-2v6h2zm0 8h-2v2h2z"/></svg>
+                            <h2>Pending Approval</h2>
+                        </div>
+                        <div class="tickets" id="pendingApproval"></div>
+                    </div>
+                    <div class="column">
+                        <div class="column-header">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                            <h2>Deactivated</h2>
+                        </div>
+                        <div class="tickets" id="deactivated"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Page -->
+            <div id="tickets" class="page">
+                <div class="controls">
+                    <input type="text" class="search-box" placeholder="Search tickets...">
+                    <button class="btn btn-primary" onclick="addNewTicket()">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        Add Ticket
+                    </button>
+                </div>
+                <div class="reports-table">
+                    <table>
+                        <thead><tr><th>Ticket ID</th><th>Employee</th><th>Description</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="ticketsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports" class="page">
+                <h2 style="margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="#0c2d6b"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+                    Deactivation Reports
+                </h2>
+                <div class="filters" style="display: flex; gap: 16px; margin-bottom: 24px;">
+                    <select class="filter-select" style="padding: 10px 22px; border-radius: 40px; border: 1px solid #d9e3f0;">
+                        <option>All Statuses</option>
+                    </select>
+                    <select class="filter-select" style="padding: 10px 22px; border-radius: 40px; border: 1px solid #d9e3f0;">
+                        <option>All Time</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Export
+                    </button>
+                </div>
+                <div class="reports-table">
+                    <table>
+                        <thead><tr><th>ID</th><th>Employee</th><th>Dept</th><th>Status</th><th>Created</th><th>Updated</th></tr></thead>
+                        <tbody id="reportsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <h2>
+                <svg viewBox="0 0 24 24"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zM3 21h8v-8H3v8zm2-6h4v4H5v-4zM13 3v8h8V3h-8zm6 6h-4V5h4v4zM13 13v2h2v-2h-2zm0 4v2h2v-2h-2zm4-4v2h2v-2h-2zm0 4v2h2v-2h-2z"/></svg>
+                Verification Needed
+            </h2>
+            <p>QR code generated for approval authority</p>
+            <div id="qrcode"></div>
+            <p><strong>Ticket:</strong> <span id="qrTicketId"></span> · <span id="qrEmployeeName"></span></p>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="approveTicket()">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                    Approve
+                </button>
+                <button class="btn btn-secondary" onclick="closeQR()">Close</button>
+            </div>
+            <p style="font-size: 0.8rem; color: #8a9bb8;">📧 Notification sent to admin</p>
+        </div>
+    </div>
+
+    <script>
+        // EXACT SAME JAVASCRIPT - UNCHANGED
+        let tickets = JSON.parse(localStorage.getItem('tickets')) || [
+            { id: 'TCK-101', name: 'Raghavendra Kumar', desc: 'Requested deactivation after resignation', status: 'AI: Pending', department: 'Engineering', dateCreated: '2023-05-15', lastUpdated: '2023-05-15' },
+            { id: 'TCK-102', name: 'Priyanka Reddy', desc: 'Ambiguous ticket about leave', status: 'AI: Pending', department: 'Marketing', dateCreated: '2023-05-16', lastUpdated: '2023-05-16' },
+            { id: 'TCK-103', name: 'Venkatesh Gowda', desc: 'Resignation verified via HR mail', status: 'AI: Pending', department: 'Sales', dateCreated: '2023-05-14', lastUpdated: '2023-05-14' },
+            { id: 'TCK-104', name: 'Anjali Sharma', desc: 'Conflicting data found', status: 'AI: Pending', department: 'HR', dateCreated: '2023-05-17', lastUpdated: '2023-05-17' },
+            { id: 'TCK-105', name: 'Karthikeya Naidu', desc: 'Proper deactivation approval', status: 'AI: Pending', department: 'Finance', dateCreated: '2023-05-13', lastUpdated: '2023-05-13' }
+        ];
+
+        let currentTicket = null;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+            event.target.classList.add('active');
+            if (pageId === 'tickets') renderTicketsTable();
+            if (pageId === 'reports') renderReportsTable();
+        }
+
+        function updateReports() {
+            document.getElementById('reportToDeactivate').innerText = tickets.filter(t => t.status.includes('Confirmed') || t.status.includes('Approved')).length;
+            document.getElementById('reportPending').innerText = tickets.filter(t => t.status.includes('Unclear')).length;
+            document.getElementById('reportDeactivated').innerText = tickets.filter(t => t.status.includes('Deactivated')).length;
+        }
+
+        function aiScanTickets() {
+            const aiStatus = document.getElementById('aiStatus');
+            aiStatus.innerText = '🤖 Scanning tickets...';
+            aiStatus.classList.add('ai-processing');
+            setTimeout(() => {
+                tickets.forEach((t, idx) => {
+                    if (t.status === 'AI: Pending') {
+                        const score = Math.random();
+                        if (score > 0.7) t.status = 'AI: Confirmed';
+                        else if (score > 0.4) { t.status = 'AI: Unclear'; setTimeout(() => generateQR(idx), 500); }
+                        else t.status = 'AI: Rejected';
+                        t.lastUpdated = new Date().toISOString().split('T')[0];
+                    }
+                });
+                renderTickets(); renderTicketsTable();
+                setTimeout(() => {
+                    aiStatus.innerText = '✅ Scan complete';
+                    aiStatus.classList.remove('ai-processing');
+                }, 1500);
+            }, 1000);
+        }
+
+        function renderTickets() {
+            const toDeactivate = document.getElementById('toDeactivate');
+            const pendingApproval = document.getElementById('pendingApproval');
+            const deactivated = document.getElementById('deactivated');
+            toDeactivate.innerHTML = ''; pendingApproval.innerHTML = ''; deactivated.innerHTML = '';
+
+            tickets.forEach((t, idx) => {
+                const card = document.createElement('div');
+                card.className = 'ticket-card';
+                if (t.status.includes('Confirmed') || t.status.includes('Approved')) card.classList.add('confirmed');
+                else if (t.status.includes('Unclear')) card.classList.add('unclear');
+                else if (t.status.includes('Deactivated')) card.classList.add('deactivated');
+
+                let actionBtn = '';
+                if (t.status.includes('Confirmed') || t.status.includes('Approved')) {
+                    actionBtn = `<button class="btn btn-primary" onclick="deactivate(${idx})">Deactivate</button>`;
+                    toDeactivate.appendChild(card);
+                } else if (t.status.includes('Unclear')) {
+                    actionBtn = `<button class="btn btn-primary" onclick="generateQR(${idx})">Generate QR</button><button class="btn btn-secondary" onclick="escalateTicket(${idx})">Escalate</button>`;
+                    pendingApproval.appendChild(card);
+                } else if (t.status.includes('Approved')) {
+                    actionBtn = `<button class="btn btn-primary" onclick="deactivate(${idx})">Deactivate</button>`;
+                    toDeactivate.appendChild(card);
+                } else if (t.status.includes('Deactivated')) {
+                    actionBtn = `<button class="btn btn-secondary" onclick="reactivateTicket(${idx})">Reactivate</button>`;
+                    deactivated.appendChild(card);
+                } else if (t.status.includes('Rejected')) {
+                    actionBtn = `<button class="btn btn-secondary" onclick="reopenTicket(${idx})">Reopen</button>`;
+                    pendingApproval.appendChild(card);
+                }
+
+                const statusClass = t.status.replace('AI: ', '').toLowerCase();
+                card.innerHTML = `
+                    <h3><svg viewBox="0 0 24 24" fill="#5b6f92"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg> ${t.id} — ${t.name}</h3>
+                    <p>${t.desc}</p>
+                    <span class="status ${statusClass}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> ${t.status}</span>
+                    <div class="ticket-actions">${actionBtn}</div>
+                `;
+            });
+            updateReports();
+            localStorage.setItem('tickets', JSON.stringify(tickets));
+        }
+
+        function renderTicketsTable() {
+            const tbody = document.getElementById('ticketsTableBody');
+            tbody.innerHTML = '';
+            tickets.forEach((t, idx) => {
+                const statusClass = t.status.replace('AI: ', '').toLowerCase();
+                let actions = '';
+                if (t.status.includes('Confirmed') || t.status.includes('Approved')) actions = `<button class="btn btn-primary" onclick="deactivate(${idx})">Deactivate</button>`;
+                else if (t.status.includes('Unclear')) actions = `<button class="btn btn-primary" onclick="generateQR(${idx})">Generate QR</button> <button class="btn btn-secondary" onclick="escalateTicket(${idx})">Escalate</button>`;
+                else if (t.status.includes('Deactivated')) actions = `<button class="btn btn-secondary" onclick="reactivateTicket(${idx})">Reactivate</button>`;
+                else if (t.status.includes('Rejected')) actions = `<button class="btn btn-secondary" onclick="reopenTicket(${idx})">Reopen</button>`;
+                else actions = `<button class="btn btn-secondary" onclick="processTicket(${idx})">Process</button>`;
+                tbody.innerHTML += `<tr><td>${t.id}</td><td>${t.name}</td><td>${t.desc}</td><td><span class="status ${statusClass}">${t.status}</span></td><td>${actions}</td></tr>`;
+            });
+        }
+
+        function renderReportsTable() {
+            const tbody = document.getElementById('reportsTableBody');
+            tbody.innerHTML = '';
+            tickets.forEach(t => {
+                tbody.innerHTML += `<tr><td>${t.id}</td><td>${t.name}</td><td>${t.department}</td><td><span class="status ${t.status.replace('AI: ', '').toLowerCase()}">${t.status}</span></td><td>${t.dateCreated}</td><td>${t.lastUpdated}</td></tr>`;
+            });
+        }
+
+        function deactivate(i) { tickets[i].status = 'Deactivated'; tickets[i].lastUpdated = new Date().toISOString().split('T')[0]; renderTickets(); renderTicketsTable(); alert(`✅ ${tickets[i].name} deactivated`); }
+        function reactivateTicket(i) { tickets[i].status = 'AI: Pending'; tickets[i].lastUpdated = new Date().toISOString().split('T')[0]; renderTickets(); renderTicketsTable(); alert(`🔄 Reactivated`); }
+        function reopenTicket(i) { tickets[i].status = 'AI: Pending'; tickets[i].lastUpdated = new Date().toISOString().split('T')[0]; renderTickets(); renderTicketsTable(); alert(`📂 Reopened`); }
+        function escalateTicket(i) { alert(`📧 Ticket escalated`); }
+        function processTicket(i) {
+            tickets[i].status = 'AI: Processing'; renderTicketsTable();
+            setTimeout(() => {
+                if (Math.random() > 0.6) tickets[i].status = 'AI: Confirmed';
+                else { tickets[i].status = 'AI: Unclear'; generateQR(i); }
+                tickets[i].lastUpdated = new Date().toISOString().split('T')[0];
+                renderTicketsTable(); renderTickets();
+            }, 800);
+        }
+
+        function addNewTicket() {
+            const newId = `TCK-${String(tickets.length + 101).padStart(3,'0')}`;
+            const names = ['Arjun Mehta', 'Divya Patel', 'Sanjay Singh']; const depts = ['Engineering','Marketing','Sales']; const descs = ['Resignation','Contract end','Retirement'];
+            const t = { id: newId, name: names[Math.floor(Math.random()*names.length)], desc: descs[Math.floor(Math.random()*descs.length)], status: 'AI: Pending', department: depts[Math.floor(Math.random()*depts.length)], dateCreated: new Date().toISOString().split('T')[0], lastUpdated: new Date().toISOString().split('T')[0] };
+            tickets.push(t); renderTickets(); renderTicketsTable(); alert(`➕ Ticket created`);
+        }
+
+        function generateQR(index) {
+            currentTicket = index;
+            const modal = document.getElementById('qrModal');
+            document.getElementById('qrcode').innerHTML = '';
+            const ticket = tickets[index];
+            document.getElementById('qrTicketId').textContent = ticket.id;
+            document.getElementById('qrEmployeeName').textContent = ticket.name;
+            new QRCode(document.getElementById('qrcode'), { text: `Approval: ${ticket.id}`, width: 200, height: 200 });
+            modal.style.display = 'flex';
+        }
+
+        function approveTicket() {
+            if (currentTicket !== null) { tickets[currentTicket].status = 'Approved'; tickets[currentTicket].lastUpdated = new Date().toISOString().split('T')[0]; renderTickets(); renderTicketsTable(); closeQR(); alert(`✅ Approved`); }
+        }
+        function closeQR() { document.getElementById('qrModal').style.display = 'none'; }
+        function generateReport() { alert('Report exported'); }
+
+        renderTickets(); renderTicketsTable(); renderReportsTable();
+    </script>
+</body>
+</html>
